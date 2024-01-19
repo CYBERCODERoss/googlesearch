@@ -19,6 +19,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
+                    //install npm
+                    sh 'npm install'
                     // Install puppeteer dependencies
                     sh 'npm install puppeteer'
                 }
