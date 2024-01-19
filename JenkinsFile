@@ -15,21 +15,6 @@ pipeline {
             }
         }
 
-        stage('Run Bash Script') {
-            steps {
-                script {
-                    def result = sh(script: "bash ${BASH_SCRIPT_PATH}", returnStatus: true)
-
-                    if (result == 0) {
-                        echo "Bash script executed successfully."
-                    } else {
-                        error "Bash script failed with exit code ${result}."
-                    }
-                }
-            }
-        }
-    }
-
     post {
         always {
             script {
