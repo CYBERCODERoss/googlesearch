@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO_URL = 'https://github.com/ CYBERCODERoss/googlesearch.git'
+        GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch.git'
         BASH_SCRIPT_PATH = 'search_google.sh'
-        EMAIL_RECIPIENT = 'talhatfaheem.com'
     }
 
     stages {
@@ -16,29 +15,20 @@ pipeline {
             }
         }
 
-        stage('Give Execute Permission') {
-            steps {
-                script {
-                    sh "chmod +x ${BASH_SCRIPT_PATH}"
-                }
-            }
-        }
-
         stage('Run Bash Script') {
             steps {
                 script {
-                    sh "bash ${BASH_SCRIPT_PATH}"
-                }
-            }
-        }
+                    def result = sh(script: "bash ${BASH_SCRIPT_PATH}", returnStatus: true)
 
-        stage('Send Email') {
-            steps {
-                script {
-                    emailext body: 'PASSED PIPELINE PROJECT', subject: 'report', to: 'talhatfaheem@gmail.com'
+                    if (result == 0) {
+                        echo "Bash script executed successfully."
+                    } else {
+                        error "Bash script failed with exit code ${result}."
+                    }
                 }
             }
         }
+    }
 
     post {
         always {
