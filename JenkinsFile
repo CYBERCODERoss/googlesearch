@@ -1,14 +1,16 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs '21.6.0'
+    environment {
+        GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch'
+        BASH_SCRIPT_PATH = 'search_google.sh'
+        EMAIL_RECIPIENT = 'talhatfaheem@gmail.com'
+        NODEJS_VERSION = '21.6.0' // Update with the desired Node.js version
+        DISPLAY_NUMBER = '99' // Choose an available display number for Xvfb
     }
 
-    environment {
-        GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch.git'
-        BASH_SCRIPT_PATH = 'search_google.sh'
-        EMAIL_RECIPIENT = 'talhatfaheem.com'
+    tools {
+        nodejs NODEJS_VERSION
     }
 
     stages {
@@ -23,14 +25,13 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    //install npm
-                    //sh 'npm install'
-                    // Install puppeteer dependencies
+                    // Install npm packages and puppeteer
                     sh 'npm install puppeteer'
                 }
             }
         }
-         stage('Set Script Permissions') {
+
+        stage('Set Script Permissions') {
             steps {
                 script {
                     // Set execute permissions for the Bash script
@@ -38,6 +39,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Setup Display') {
+            steps {
+                script {
+                    sh "Xvfb :${DISPLAY_NUMBER} -ac -screen 0 1024x768x16 &"
+                    sh "export DISPLAY=:${DISPLAY_NUMBER}"
+                }
+            }
+        }
+
         stage('Run Bash Script') {
             steps {
                 script {
@@ -64,6 +75,7 @@ pipeline {
     post {
         always {
             script {
+                sh "pkill -9 -f Xvfb" // Clean up Xvfb after the pipeline run
                 deleteDir()
             }
         }
