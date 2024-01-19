@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch.git'
+        BASH_SCRIPT_PATH = 'search_google.sh'
+        EMAIL_RECIPIENT = 'talhatfaheem.com'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main', url: GIT_REPO_URL
+                }
+            }
+        }
+
+        stage('Run Bash Script') {
+            steps {
+                script {
+                    sh "./${BASH_SCRIPT_PATH}"
+                }
+            }
+        }
+
+        stage('Send Email') {
+            steps {
+                script {
+                    currentBuild.result = currentBuild.resultIsBetterOrEqualTo('SUCCESS') ? 'SUCCESS' : 'FAILURE'
+
+                    emailext subject: "Job ${currentBuild.result}: Pipeline ${currentBuild.displayName}",
+                             body: "The Jenkins job ${currentBuild.result}.",
+                             recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                             to: EMAIL_RECIPIENT
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                deleteDir()
+            }
+        }
+    }
+}
