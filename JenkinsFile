@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs NODEJS_VERSION
+    }
+
     environment {
         GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch.git'
         BASH_SCRIPT_PATH = 'search_google.sh'
