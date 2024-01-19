@@ -16,9 +16,19 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install puppeteer dependencies
+                    sh 'npm install puppeteer'
+                }
+            }
+        }
+
         stage('Run Bash Script') {
             steps {
                 script {
+                    // Run the Bash script that uses puppeteer
                     sh "./${BASH_SCRIPT_PATH}"
                 }
             }
