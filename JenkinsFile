@@ -30,7 +30,14 @@ pipeline {
                 }
             }
         }
-
+         stage('Set Script Permissions') {
+            steps {
+                script {
+                    // Set execute permissions for the Bash script
+                    sh 'chmod +x search_google.sh'
+                }
+            }
+        }
         stage('Run Bash Script') {
             steps {
                 script {
