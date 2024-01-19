@@ -2,15 +2,9 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO_URL = 'https://github.com/CYBERCODERoss/googlesearch'
+        GIT_REPO_URL = 'https://github.com/ CYBERCODERoss/googlesearch.git'
         BASH_SCRIPT_PATH = 'search_google.sh'
-        EMAIL_RECIPIENT = 'talhatfaheem@gmail.com'
-        NODEJS_VERSION = '21.6.0' // Update with the desired Node.js version
-        DISPLAY_NUMBER = '99' // Choose an available display number for Xvfb
-    }
-
-    tools {
-        nodejs NODEJS_VERSION
+        EMAIL_RECIPIENT = 'talhatfaheem.com'
     }
 
     stages {
@@ -22,29 +16,10 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Give Execute Permission') {
             steps {
                 script {
-                    // Install npm packages and puppeteer
-                    sh 'npm install puppeteer'
-                }
-            }
-        }
-
-        stage('Set Script Permissions') {
-            steps {
-                script {
-                    // Set execute permissions for the Bash script
-                    sh 'chmod +x search_google.sh'
-                }
-            }
-        }
-
-        stage('Setup Display') {
-            steps {
-                script {
-                    sh "Xvfb :${DISPLAY_NUMBER} -ac -screen 0 1024x768x16 &"
-                    sh "export DISPLAY=:${DISPLAY_NUMBER}"
+                    sh "chmod +x ${BASH_SCRIPT_PATH}"
                 }
             }
         }
@@ -52,8 +27,7 @@ pipeline {
         stage('Run Bash Script') {
             steps {
                 script {
-                    // Run the Bash script that uses puppeteer
-                    sh "./${BASH_SCRIPT_PATH}"
+                    sh "bash ${BASH_SCRIPT_PATH}"
                 }
             }
         }
@@ -61,21 +35,14 @@ pipeline {
         stage('Send Email') {
             steps {
                 script {
-                    currentBuild.result = currentBuild.resultIsBetterOrEqualTo('SUCCESS') ? 'SUCCESS' : 'FAILURE'
-
-                    emailext subject: "Job ${currentBuild.result}: Pipeline ${currentBuild.displayName}",
-                             body: "The Jenkins job ${currentBuild.result}.",
-                             recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
-                             to: EMAIL_RECIPIENT
+                    emailext body: 'PASSED PIPELINE PROJECT', subject: 'report', to: 'talhatfaheem@gmail.com'
                 }
             }
         }
-    }
 
     post {
         always {
             script {
-                sh "pkill -9 -f Xvfb" // Clean up Xvfb after the pipeline run
                 deleteDir()
             }
         }
