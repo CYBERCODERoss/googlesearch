@@ -1,20 +1,12 @@
 #!/bin/bash
+# Bash script to add two hardcoded numbers
 
-# Function to add two numbers
-add_numbers() {
-    sum=$(($1 + $2))
-    echo "Sum of $1 and $2 is: $sum"
-}
+# Hardcoded numbers
+num1=5
+num2=3
 
-# Check if exactly two arguments are provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <number1> <number2>"
-    exit 1
-fi
+# Add the numbers
+sum=$((num1 + num2))
 
-# Parse command line arguments
-number1=$1
-number2=$2
-
-# Call the function to add numbers
-add_numbers $number1 $number2
+# Print the result
+echo "The sum of $num1 and $num2 is: $sum"
